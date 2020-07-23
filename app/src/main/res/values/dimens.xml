@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="margin_16">16dp</dimen>
+    <dimen name="margin_32">32dp</dimen>
+    <dimen name="margin_8">8dp</dimen>
+    <dimen name="sizeSP18">18sp</dimen>
+    <dimen name="sizeSP12">12sp</dimen>
+    <dimen name="sizeSP14">14sp</dimen>
+
+    <!--setting fragment-->
+    <dimen name="settings_header_bloc_height">100dp</dimen>
+    <dimen name="settings_user_photo_width">55dp</dimen>
+    <dimen name="settings_user_photo_height">55dp</dimen>
+    <dimen name="settings_user_changephoto_width">45dp</dimen>
+    <dimen name="settings_user_changephoto_height">45dp</dimen>
+    <dimen name="setiings4dp">4dp</dimen>
+    <dimen name="padding5dp">5dp</dimen>
+</resources>

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "256917566487",
+    "firebase_url": "https://duplicatetelegram.firebaseio.com",
+    "project_id": "duplicatetelegram",
+    "storage_bucket": "duplicatetelegram.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:256917566487:android:97e08aa7f0b9865b1a1852",
+        "android_client_info": {
+          "package_name": "com.example.duplicatetelegram"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "256917566487-0e855e4ikpom9uvmvfkjl2mdrt7h0pj2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.duplicatetelegram",
+            "certificate_hash": "8a52e49145c814123ae9ebdcf30f8ca2a90b818f"
+          }
+        },
+        {
+          "client_id": "256917566487-gg3dd6k6iiiuokhdhjg24kgau2u5laur.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANy_ueFiJRq_Okfh41YphDgxNot-JAmdw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "256917566487-gg3dd6k6iiiuokhdhjg24kgau2u5laur.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
