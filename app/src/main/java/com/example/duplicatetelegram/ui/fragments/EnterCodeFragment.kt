@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.fragment_enter_code.*
  * A simple [Fragment] subclass.
  */
 class EnterCodeFragment(val phoneNumber: String, val id: String?) :
-    BaseFragment(R.layout.fragment_enter_code) {
+    Fragment(R.layout.fragment_enter_code) {
     override fun onStart() {
         super.onStart()
         (activity as RegisterActivity).title = phoneNumber
@@ -28,7 +28,7 @@ class EnterCodeFragment(val phoneNumber: String, val id: String?) :
         })
     }
 
-     fun verifiCode() {
+    fun verifiCode() {
         val code = registerInputCode.text.toString()
         val credential = PhoneAuthProvider.getCredential(id.toString(), code)
         AUTH.signInWithCredential(credential).addOnCompleteListener {
@@ -38,14 +38,14 @@ class EnterCodeFragment(val phoneNumber: String, val id: String?) :
                 dataMap[CHILD_ID] = uid
                 dataMap[CHILD_PHONE] = phoneNumber
                 dataMap[CHILD_USERNAME] = uid
-                REF_DATA_BASE_ROOT.child(NODE_USERS).child(uid).updateChildren(dataMap)
-                    .addOnCompleteListener { task2 ->
-                        if (task2.isSuccessful) {
-                            showToast("welcome")
-                            (activity as RegisterActivity).replaceActivity(MainActivity())
-                        } else {
-                            showToast(it.exception?.message.toString())
-                        }
+                REF_DATA_BASE_ROOT.child(NODE_NUMBERS).child(phoneNumber).setValue(uid)
+                    .addOnFailureListener { showToast(it.message.toString()) }
+                    .addOnSuccessListener {
+                        REF_DATA_BASE_ROOT.child(NODE_USERS).child(uid).updateChildren(dataMap)
+                            .addOnSuccessListener { task2 ->
+                                showToast("welcome")
+                                (activity as RegisterActivity).replaceActivity(MainActivity())
+                            }.addOnFailureListener { showToast(it.message.toString()) }
                     }
 
             } else {

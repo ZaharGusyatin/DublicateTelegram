@@ -11,7 +11,7 @@ import com.example.duplicatetelegram.activities.MainActivity
 import com.example.duplicatetelegram.databinding.FragmentChatsBinding
 
 
-    class ChatsFragment : Fragment(R.layout.fragment_chats){
+    class ChatsFragment :  Fragment(R.layout.fragment_chats){
 
         override fun onResume() {
             super.onResume()

@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit
 /**
  * A simple [Fragment] subclass.
  */
-class EnterPhoneNumberFragment : BaseFragment(R.layout.fragment_enter_phone_number) {
+class EnterPhoneNumberFragment : Fragment(R.layout.fragment_enter_phone_number) {
 
     private lateinit var mPhoneNumber: String
     private lateinit var mCallBack: PhoneAuthProvider.OnVerificationStateChangedCallbacks
@@ -39,12 +39,14 @@ class EnterPhoneNumberFragment : BaseFragment(R.layout.fragment_enter_phone_numb
                 }
             }
 
-            override fun onVerificationFailed(p0: FirebaseException?) {
+            override fun onVerificationFailed(p0: FirebaseException) {
                 showToast(p0?.message.toString())
             }
 
-            override fun onCodeSent(id: String?, token: PhoneAuthProvider.ForceResendingToken?) {
-replaceFragment(EnterCodeFragment(mPhoneNumber,id))
+
+
+            override fun onCodeSent(p0: String, p1: PhoneAuthProvider.ForceResendingToken) {
+replaceFragment(EnterCodeFragment(mPhoneNumber, id.toString()))
 
             }
         }

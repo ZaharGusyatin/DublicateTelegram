@@ -3,10 +3,12 @@ package com.example.duplicatetelegram.activities
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import com.example.duplicatetelegram.R
 import com.example.duplicatetelegram.databinding.ActivityMainBinding
 import com.example.duplicatetelegram.models.User
@@ -14,6 +16,8 @@ import com.example.duplicatetelegram.ui.fragments.ChatsFragment
 import com.example.duplicatetelegram.ui.objects.AppDrawer
 import com.example.duplicatetelegram.utilits.*
 import com.theartofdev.edmodo.cropper.CropImage
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private lateinit var mBinding: ActivityMainBinding
@@ -37,12 +41,18 @@ class MainActivity : AppCompatActivity() {
         setContentView(mBinding.root)
         APP_ACTIVITY = this
         initFirebase()
-        initUser{//лямбда=как только выполниться идет поток дальше
+        initUser {
+            //лямбда=как только выполниться идет поток дальше
+            GlobalScope.launch {
+                initContacts()
+            }
             initFields()
             initFunc()
         }
 
     }
+
+
 
 
     private fun initFunc() {
@@ -55,6 +65,22 @@ class MainActivity : AppCompatActivity() {
 
         }
 
+
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (ContextCompat.checkSelfPermission(
+                APP_ACTIVITY,
+                READ_CONTACTS
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            initContacts()
+        }
     }
 
 
