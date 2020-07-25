@@ -16,4 +16,5 @@
     <dimen name="settings_user_changephoto_height">45dp</dimen>
     <dimen name="setiings4dp">4dp</dimen>
     <dimen name="padding5dp">5dp</dimen>
+    <dimen name="margin_message_start">100dp</dimen>
 </resources>
