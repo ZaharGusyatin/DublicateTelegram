@@ -1,6 +1,6 @@
 package com.example.duplicatetelegram.models
 
-data class User(
+data class UserMode(
     var id: String = "",
     var username: String = "",
     var bio: String = "",

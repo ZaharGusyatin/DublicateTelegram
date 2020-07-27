@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 import com.example.duplicatetelegram.R
 import com.example.duplicatetelegram.models.CommonModel
+import com.example.duplicatetelegram.ui.fragments.single_chat.SingleChatFragment
 import com.example.duplicatetelegram.utilits.*
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
@@ -29,6 +30,7 @@ class ContactsFragment : BaseFragment(R.layout.fragment_contacts) {
     private var mapListeners = hashMapOf<DatabaseReference, AppValueEventListener>()
 
     override fun onResume() {
+        APP_ACTIVITY.title="Контакты"
         super.onResume()
         initRecycleView()
 
@@ -53,18 +55,25 @@ class ContactsFragment : BaseFragment(R.layout.fragment_contacts) {
                 model: CommonModel
             ) {
                 mRefUsers = REF_DATA_BASE_ROOT.child(NODE_USERS).child(model.id)
-                mRefUsersListener= AppValueEventListener {
+                mRefUsersListener = AppValueEventListener {
                     val contact = it.getCommonModel()
-
-                    holder.name.text = contact.fullname
-                    holder.status.text = contact.status
-                    holder.photo.downloadAndSetImage(contact.photoUrl)
-                    holder.itemView.setOnClickListener {
-                        replaceFragment(SingleChatFragment(contact))
+                    if (contact.fullname.isEmpty()) {
+                        holder.name.text = model.fullname
+                    } else {
+                        holder.name.text = contact.fullname
+                        holder.status.text = contact.status
+                        holder.photo.downloadAndSetImage(contact.photoUrl)
+                        holder.itemView.setOnClickListener {
+                            replaceFragment(
+                                SingleChatFragment(
+                                    model
+                                )
+                            )
+                        }
                     }
                 }
                 mRefUsers.addValueEventListener(mRefUsersListener)
-                mapListeners[mRefUsers]=mRefUsersListener
+                mapListeners[mRefUsers] = mRefUsersListener
 
 
             }
@@ -78,7 +87,7 @@ class ContactsFragment : BaseFragment(R.layout.fragment_contacts) {
         super.onPause()
         mAdapter.stopListening()
 
-        mapListeners.forEach{
+        mapListeners.forEach {
             it.key.removeEventListener(it.value)
         }
 

@@ -26,4 +26,5 @@
     <string name="toast_data_update">Данные обновлены</string>
     <string name="change_bio">информация о вас</string>
     <string name="message">сообщение</string>
+    <string name="send_message_plz">введите сообщение</string>
 </resources>
