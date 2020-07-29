@@ -1,6 +1,7 @@
 package com.example.duplicatetelegram.ui.fragments
 
 import com.example.duplicatetelegram.R
+import com.example.duplicatetelegram.database.*
 import com.example.duplicatetelegram.utilits.*
 import kotlinx.android.synthetic.main.fragment_change_name.*
 
@@ -29,16 +30,13 @@ class ChangeNameFragment : BaseChangeFragment(R.layout.fragment_change_name) {
             showToast(getString(R.string.settings_toast_name_is_empty))
         } else {
             val fullname = "$name $surname"
-            REF_DATA_BASE_ROOT.child(NODE_USERS).child(CURRENT_UID).child(CHILD_FULLNAME)
-                .setValue(fullname).addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        showToast(getString(R.string.toast_data_update))
-                        USER.fullname = fullname
-                        APP_ACTIVITY.mAppDrawer.upDateHeader()
-                        fragmentManager?.popBackStack()
-                    }
-                }
+            setNameToDatabase(fullname)
+
+
+
 
         }
     }
+
+
 }

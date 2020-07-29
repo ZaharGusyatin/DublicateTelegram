@@ -6,15 +6,12 @@ import android.provider.ContactsContract
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.duplicatetelegram.R
-import com.example.duplicatetelegram.activities.RegisterActivity
+import com.example.duplicatetelegram.activities.MainActivity
+import com.example.duplicatetelegram.database.updateNumbersToDatabase
 import com.example.duplicatetelegram.models.CommonModel
-import com.example.duplicatetelegram.ui.fragments.ChatsFragment
 import com.squareup.picasso.Picasso
-import de.hdodenhof.circleimageview.CircleImageView
-import kotlinx.android.synthetic.main.fragment_settings.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -22,22 +19,22 @@ fun showToast(message: String) {
     Toast.makeText(APP_ACTIVITY, message, Toast.LENGTH_SHORT).show()
 }
 
-fun AppCompatActivity.replaceActivity(activity: AppCompatActivity) {
-    val intent = Intent(this, activity::class.java)
-    startActivity(intent)
-    this.finish()
+fun restartActivity() {
+    val intent = Intent(APP_ACTIVITY, MainActivity::class.java)
+    APP_ACTIVITY.startActivity(intent)
+    APP_ACTIVITY.finish()
 }
 
-fun AppCompatActivity.replaceFragment(fragment: Fragment, addStack: Boolean = true) {
+fun replaceFragment(fragment: Fragment, addStack: Boolean = true) {
     if (addStack) {
-        supportFragmentManager.beginTransaction()
+        APP_ACTIVITY.supportFragmentManager.beginTransaction()
             .addToBackStack(null)
             .replace(
                 R.id.dataContainer,
                 fragment
             ).commit()
     } else {
-        supportFragmentManager.beginTransaction()
+        APP_ACTIVITY.supportFragmentManager.beginTransaction()
             .replace(
                 R.id.dataContainer,
                 fragment
@@ -46,14 +43,7 @@ fun AppCompatActivity.replaceFragment(fragment: Fragment, addStack: Boolean = tr
 
 }
 
-fun Fragment.replaceFragment(fragment: Fragment) {
-    this.fragmentManager?.beginTransaction()
-        ?.addToBackStack(null)
-        ?.replace(
-            R.id.dataContainer,
-            fragment
-        )?.commit()
-}
+
 
 fun hideKeyBoard() {
     val imm: InputMethodManager =
@@ -97,7 +87,9 @@ fun initContacts() {
             }
         }
         cursor?.close()
-        updateNumbersToDatabase(arrayContacts)
+        updateNumbersToDatabase(
+            arrayContacts
+        )
     }
 }
 

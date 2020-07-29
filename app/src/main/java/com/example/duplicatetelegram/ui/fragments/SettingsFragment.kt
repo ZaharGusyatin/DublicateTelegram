@@ -1,17 +1,13 @@
 package com.example.duplicatetelegram.ui.fragments
 
-import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.content.Intent
-import android.net.Uri
 import android.view.*
 
 import com.example.duplicatetelegram.R
 import com.example.duplicatetelegram.activities.MainActivity
-import com.example.duplicatetelegram.activities.RegisterActivity
+import com.example.duplicatetelegram.database.*
 import com.example.duplicatetelegram.utilits.*
-import com.google.firebase.storage.StorageReference
-import com.squareup.picasso.Picasso
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.android.synthetic.main.fragment_settings.*
@@ -64,7 +60,7 @@ class SettingsFragment : BaseFragment(R.layout.fragment_settings) {
             R.id.settings_menu_exitApp -> {
                 AppStates.updateState(AppStates.OFFLINE)
                 AUTH.signOut()
-                (activity as MainActivity).replaceActivity(RegisterActivity())
+                restartActivity()
             }
             R.id.settings_menu_change_name -> {
                 replaceFragment(ChangeNameFragment())
@@ -80,7 +76,9 @@ class SettingsFragment : BaseFragment(R.layout.fragment_settings) {
             && data != null
         ) {
             val uri = CropImage.getActivityResult(data).uri
-            val path = REF_STORAGE_ROOT.child(FOLDER_PROFILE_IMAGE).child(CURRENT_UID)
+            val path = REF_STORAGE_ROOT.child(
+                FOLDER_PROFILE_IMAGE
+            ).child(CURRENT_UID)
             putImageToStorage(uri, path) {
                 getUrlFromStorage(path) {
                     putUrlDatabase(it) {

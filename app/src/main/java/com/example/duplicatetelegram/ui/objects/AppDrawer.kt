@@ -7,9 +7,8 @@ import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.duplicatetelegram.R
-import com.example.duplicatetelegram.activities.MainActivity
 import com.example.duplicatetelegram.ui.fragments.*
-import com.example.duplicatetelegram.utilits.USER
+import com.example.duplicatetelegram.database.USER
 import com.example.duplicatetelegram.utilits.downloadAndSetImage
 import com.example.duplicatetelegram.utilits.replaceFragment
 import com.mikepenz.materialdrawer.AccountHeader
@@ -30,7 +29,7 @@ class AppDrawer(
     private lateinit var mDrawer: Drawer
     private lateinit var mHeader: AccountHeader
     private lateinit var mDrawerLayout: DrawerLayout
-    private lateinit var mCurrentProfile:ProfileDrawerItem
+    private lateinit var mCurrentProfile: ProfileDrawerItem
     private fun createDrawer() {
         mDrawer = DrawerBuilder()
             .withActivity(mainActivity)
@@ -84,15 +83,24 @@ class AppDrawer(
                     drawerItem: IDrawerItem<*>
                 ): Boolean {
                     when (position) {
-                        1 -> mainActivity.replaceFragment(CreateAGroupFragment())
-                        2 -> mainActivity.replaceFragment(CreateASecretGroupFragment())
-                        3 -> mainActivity.replaceFragment(CreateChannelFragment())
-                        4 -> mainActivity.replaceFragment(ContactsFragment())
-                        5 -> mainActivity.replaceFragment(CallsFragment())
-                        6 -> mainActivity.replaceFragment(FeaturedFragment())
-                        7 -> mainActivity.replaceFragment(SettingsFragment())
-                        9 -> mainActivity.replaceFragment(InviteFriendsFragment())
-                        10 -> mainActivity.replaceFragment(QuestionsAboutTelegramFragment())
+                        1 ->
+                            replaceFragment(CreateAGroupFragment())
+                        2 ->
+                            replaceFragment(CreateASecretGroupFragment())
+                        3 ->
+                            replaceFragment(CreateChannelFragment())
+                        4 ->
+                            replaceFragment(ContactsFragment())
+                        5 ->
+                            replaceFragment(CallsFragment())
+                        6 ->
+                            replaceFragment(FeaturedFragment())
+                        7 ->
+                            replaceFragment(SettingsFragment())
+                        9 ->
+                            replaceFragment(InviteFriendsFragment())
+                        10 ->
+                            replaceFragment(QuestionsAboutTelegramFragment())
 
                     }
                     return false
@@ -101,11 +109,11 @@ class AppDrawer(
     }
 
     private fun createHeader() {
-        mCurrentProfile=ProfileDrawerItem()
+        mCurrentProfile = ProfileDrawerItem()
             .withName(USER.fullname)
             .withEmail(USER.number)
             .withIcon(USER.photoUrl)
-                .withIdentifier(200)
+            .withIdentifier(200)
         mHeader = AccountHeaderBuilder()
             .withActivity(mainActivity)
             .withHeaderBackground(R.drawable.header)
@@ -140,17 +148,19 @@ class AppDrawer(
         }
 
     }
-    fun upDateHeader(){
+
+    fun upDateHeader() {
         mCurrentProfile
             .withName(USER.fullname)
             .withEmail(USER.number)
             .withIcon(USER.photoUrl)
-mHeader.updateProfile(mCurrentProfile)
+        mHeader.updateProfile(mCurrentProfile)
     }
-    private fun initLoader(){
-        DrawerImageLoader.init(object :AbstractDrawerImageLoader(){
+
+    private fun initLoader() {
+        DrawerImageLoader.init(object : AbstractDrawerImageLoader() {
             override fun set(imageView: ImageView, uri: Uri, placeholder: Drawable) {
-                 imageView.downloadAndSetImage(uri.toString())
+                imageView.downloadAndSetImage(uri.toString())
             }
         })
     }

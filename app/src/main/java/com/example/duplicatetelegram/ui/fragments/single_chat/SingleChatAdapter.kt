@@ -5,28 +5,31 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.duplicatetelegram.R
 import com.example.duplicatetelegram.models.CommonModel
-import com.example.duplicatetelegram.utilits.CURRENT_UID
+import com.example.duplicatetelegram.database.CURRENT_UID
+import com.example.duplicatetelegram.utilits.DiffUtilCallback
+import com.example.duplicatetelegram.utilits.asTime
 import kotlinx.android.synthetic.main.message_item.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-class  SingleChatAdapter : RecyclerView.Adapter<SingleChatAdapter.SingleChatHolder>() {
 
-    var mListMessagesCache = emptyList<CommonModel>()
+class SingleChatAdapter : RecyclerView.Adapter<SingleChatAdapter.SingleChatHolder>() {
 
+    private var mListMessagesCache = emptyList<CommonModel>()
+    private lateinit var mDiffResult: DiffUtil.DiffResult
 
     class SingleChatHolder(view: View) : RecyclerView.ViewHolder(view) {
-
-        val blockUserMessage: ConstraintLayout = view.bloc_user_message
+        val blocUserMessage: ConstraintLayout = view.bloc_user_message
         val chatUserMessage: TextView = view.chat_user_message
-        val chatUserTime: TextView = view.chat_user_time
+        val chatUserMessageTime: TextView = view.chat_user_time
 
-        val blockReceivedMessage: ConstraintLayout = view.bloc_receiving_message
+        val blocReceivedMessage: ConstraintLayout = view.bloc_receiving_message
         val chatReceivedMessage: TextView = view.chat_receiving_message
-        val chatReceivedTime: TextView = view.chat_receiving_time
+        val chatReceivedMeessageTime: TextView = view.chat_receiving_time
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SingleChatHolder {
@@ -38,26 +41,30 @@ class  SingleChatAdapter : RecyclerView.Adapter<SingleChatAdapter.SingleChatHold
 
     override fun onBindViewHolder(holder: SingleChatHolder, position: Int) {
         if (mListMessagesCache[position].from == CURRENT_UID) {
-            holder.blockUserMessage.visibility = View.VISIBLE
-            holder.blockReceivedMessage.visibility = View.GONE
+            holder.blocUserMessage.visibility = View.VISIBLE
+            holder.blocReceivedMessage.visibility = View.GONE
             holder.chatUserMessage.text = mListMessagesCache[position].text
-            holder.chatUserTime.text = mListMessagesCache[position].timeStamp.toString().asTime()
+            holder.chatUserMessageTime.text =
+                mListMessagesCache[position].timeStamp.toString().asTime()
         } else {
-            holder.blockUserMessage.visibility = View.GONE
-            holder.blockReceivedMessage.visibility = View.VISIBLE
+            holder.blocUserMessage.visibility = View.GONE
+            holder.blocReceivedMessage.visibility = View.VISIBLE
             holder.chatReceivedMessage.text = mListMessagesCache[position].text
-            holder.chatReceivedTime.text = mListMessagesCache[position].timeStamp.toString().asTime()
+            holder.chatReceivedMeessageTime.text =
+                mListMessagesCache[position].timeStamp.toString().asTime()
         }
     }
 
-    fun setList(list: List<CommonModel>) {
-        mListMessagesCache = list
-        notifyDataSetChanged()
-    }
-}
 
-fun String.asTime(): String {
-    val time = Date(this.toLong())
-    val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-    return timeFormat.format(time)
+    fun addItem(item: CommonModel) {
+        val newList = mutableListOf<CommonModel>()
+        newList.addAll(mListMessagesCache)
+
+        if (!newList.contains(item)) newList.add(item)
+
+        newList.sortBy { it.timeStamp.toString() }
+        mDiffResult = DiffUtil.calculateDiff(DiffUtilCallback(mListMessagesCache, newList))
+        mDiffResult.dispatchUpdatesTo(this)
+        mListMessagesCache = newList
+    }
 }

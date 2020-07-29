@@ -1,14 +1,10 @@
-package com.example.duplicatetelegram.ui.fragments
+package com.example.duplicatetelegram.ui.fragments.register
 
 import androidx.fragment.app.Fragment
 
 import com.example.duplicatetelegram.R
-import com.example.duplicatetelegram.activities.MainActivity
-import com.example.duplicatetelegram.activities.RegisterActivity
-import com.example.duplicatetelegram.utilits.AUTH
-import com.example.duplicatetelegram.utilits.replaceActivity
-import com.example.duplicatetelegram.utilits.replaceFragment
-import com.example.duplicatetelegram.utilits.showToast
+import com.example.duplicatetelegram.database.AUTH
+import com.example.duplicatetelegram.utilits.*
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthCredential
@@ -31,7 +27,7 @@ class EnterPhoneNumberFragment : Fragment(R.layout.fragment_enter_phone_number) 
                 AUTH.signInWithCredential(credential).addOnCompleteListener {
                     if (it.isSuccessful) {
                         showToast("welcome")
-                        (activity as RegisterActivity).replaceActivity(MainActivity())
+                        restartActivity()
                     } else {
                         showToast(it.exception?.message.toString())
                     }
@@ -44,9 +40,13 @@ class EnterPhoneNumberFragment : Fragment(R.layout.fragment_enter_phone_number) 
             }
 
 
-
             override fun onCodeSent(p0: String, p1: PhoneAuthProvider.ForceResendingToken) {
-replaceFragment(EnterCodeFragment(mPhoneNumber, id.toString()))
+                replaceFragment(
+                    EnterCodeFragment(
+                        mPhoneNumber,
+                        id.toString()
+                    )
+                )
 
             }
         }
@@ -69,8 +69,7 @@ replaceFragment(EnterCodeFragment(mPhoneNumber, id.toString()))
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
             mPhoneNumber,
             60,
-            TimeUnit.SECONDS,
-            activity as RegisterActivity,
+            TimeUnit.SECONDS, APP_ACTIVITY,
             mCallBack
         )
     }

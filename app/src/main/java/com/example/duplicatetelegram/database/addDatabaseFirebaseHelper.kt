@@ -1,9 +1,12 @@
-package com.example.duplicatetelegram.utilits
+package com.example.duplicatetelegram.database
 
 import android.net.Uri
-import android.provider.ContactsContract
+import com.example.duplicatetelegram.R
 import com.example.duplicatetelegram.models.CommonModel
 import com.example.duplicatetelegram.models.UserMode
+import com.example.duplicatetelegram.utilits.APP_ACTIVITY
+import com.example.duplicatetelegram.utilits.AppValueEventListener
+import com.example.duplicatetelegram.utilits.showToast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
@@ -50,7 +53,9 @@ fun initFirebase() {
 }
 
 inline fun putUrlDatabase(url: String, crossinline function: () -> Unit) {
-    REF_DATA_BASE_ROOT.child(NODE_USERS).child(CURRENT_UID).child(
+    REF_DATA_BASE_ROOT.child(
+        NODE_USERS
+    ).child(CURRENT_UID).child(
         CHILD_PHOTO_URL
     ).setValue(url).addOnSuccessListener {
         function()
@@ -63,7 +68,11 @@ inline fun getUrlFromStorage(path: StorageReference, crossinline function: (url:
     path.downloadUrl
         .addOnSuccessListener {
             function(it.toString())
-        }.addOnFailureListener { showToast(it.message.toString()) }
+        }.addOnFailureListener {
+            showToast(
+                it.message.toString()
+            )
+        }
 }
 
 inline fun putImageToStorage(uri: Uri?, path: StorageReference, crossinline function: () -> Unit) {
@@ -73,11 +82,16 @@ inline fun putImageToStorage(uri: Uri?, path: StorageReference, crossinline func
 }
 
 inline fun initUser(crossinline function: () -> Unit) {
-    REF_DATA_BASE_ROOT.child(NODE_USERS).child(CURRENT_UID)
+    REF_DATA_BASE_ROOT.child(
+        NODE_USERS
+    ).child(CURRENT_UID)
         .addListenerForSingleValueEvent(AppValueEventListener {
-            USER = it.getValue(USER::class.java) ?: UserMode()
+            USER =
+                it.getValue(USER::class.java)
+                    ?: UserMode()
             if (USER.username.isEmpty()) {
-                USER.username = CURRENT_UID
+                USER.username =
+                    CURRENT_UID
             }
             function()
         })
@@ -86,20 +100,38 @@ inline fun initUser(crossinline function: () -> Unit) {
 
 fun updateNumbersToDatabase(arrayContacts: ArrayList<CommonModel>) {
     if (AUTH.currentUser != null) {
-        REF_DATA_BASE_ROOT.child(NODE_NUMBERS)
+        REF_DATA_BASE_ROOT.child(
+            NODE_NUMBERS
+        )
             .addListenerForSingleValueEvent(AppValueEventListener {
                 it.children.forEach { snapshot ->
                     arrayContacts.forEach { contact ->
                         if (snapshot.key == contact.number) {
-                            REF_DATA_BASE_ROOT.child(NODE_NUMBERS_CONTACTS).child(CURRENT_UID)
-                                .child(snapshot.value.toString()).child(CHILD_ID)
+                            REF_DATA_BASE_ROOT.child(
+                                NODE_NUMBERS_CONTACTS
+                            )
+                                .child(CURRENT_UID)
+                                .child(snapshot.value.toString())
+                                .child(CHILD_ID)
                                 .setValue(snapshot.value.toString())
-                                .addOnFailureListener { showToast(it.message.toString()) }//добавление контактов в бд
+                                .addOnFailureListener {
+                                    showToast(
+                                        it.message.toString()
+                                    )
+                                }//добавление контактов в бд
 
-                            REF_DATA_BASE_ROOT.child(NODE_NUMBERS_CONTACTS).child(CURRENT_UID)
-                                .child(snapshot.value.toString()).child(CHILD_FULLNAME)
+                            REF_DATA_BASE_ROOT.child(
+                                NODE_NUMBERS_CONTACTS
+                            )
+                                .child(CURRENT_UID)
+                                .child(snapshot.value.toString())
+                                .child(CHILD_FULLNAME)
                                 .setValue(contact.fullname)
-                                .addOnFailureListener { showToast(it.message.toString()) }//добавление контактов в бд
+                                .addOnFailureListener {
+                                    showToast(
+                                        it.message.toString()
+                                    )
+                                }//добавление контактов в бд
                         }
                     }
                 }
@@ -119,7 +151,8 @@ fun sendMessage(message: String, receivingUserID: String, typeText: String, func
     val refDialogReceivingUser = "$NODE_MESSAGE/$receivingUserID/$CURRENT_UID"
     val messageKey = REF_DATA_BASE_ROOT.child(refDialogUser).push().key
     val mapMessage = hashMapOf<String, Any>()
-    mapMessage[CHILD_FROM] = CURRENT_UID
+    mapMessage[CHILD_FROM] =
+        CURRENT_UID
     mapMessage[CHILD_TYPE] = typeText
     mapMessage[CHILD_TEXT] = message
     mapMessage[CHILD_TIMESTAMP] = ServerValue.TIMESTAMP
@@ -131,5 +164,70 @@ fun sendMessage(message: String, receivingUserID: String, typeText: String, func
     REF_DATA_BASE_ROOT
         .updateChildren(mapDialog).addOnSuccessListener {
             function()
+        }.addOnFailureListener {
+            showToast(
+                it.message.toString()
+            )
+        }
+
+
+}
+
+fun changeUserName3(newUserName: String) {
+    REF_DATA_BASE_ROOT.child(
+        NODE_USERS
+    ).child(CURRENT_UID).child(
+        CHILD_USERNAME
+    )
+        .setValue(newUserName).addOnSuccessListener {
+
+            showToast(APP_ACTIVITY.getString(R.string.toast_data_update))
+            deleteOldUserName(newUserName)
+
+
         }.addOnFailureListener { showToast(it.message.toString()) }
 }
+
+
+private fun deleteOldUserName(newUserName: String) {
+    REF_DATA_BASE_ROOT.child(
+        NODE_USERNAMES
+    ).child(USER.username).removeValue()
+        .addOnSuccessListener {
+
+            showToast(APP_ACTIVITY.getString(R.string.toast_data_update))
+            APP_ACTIVITY.supportFragmentManager?.popBackStack()
+            USER.username = newUserName
+
+
+        }.addOnFailureListener { showToast(it.message.toString()) }
+}
+
+fun setBioToDatabase(newBio: String) {
+    REF_DATA_BASE_ROOT.child(
+        NODE_USERS
+    ).child(CURRENT_UID).child(
+        CHILD_BIO
+    ).setValue(newBio)
+        .addOnSuccessListener {
+            showToast(APP_ACTIVITY.getString(R.string.toast_data_update))
+            USER.bio = newBio
+            APP_ACTIVITY.supportFragmentManager?.popBackStack()
+        }.addOnFailureListener { showToast(it.message.toString()) }
+}
+
+fun setNameToDatabase(fullname: String) {
+    REF_DATA_BASE_ROOT.child(
+        NODE_USERS
+    ).child(CURRENT_UID).child(
+        CHILD_FULLNAME
+    )
+        .setValue(fullname).addOnSuccessListener {
+            showToast(APP_ACTIVITY.getString(R.string.toast_data_update))
+            USER.fullname = fullname
+            APP_ACTIVITY.mAppDrawer.upDateHeader()
+            APP_ACTIVITY.supportFragmentManager?.popBackStack()
+
+        }.addOnFailureListener { showToast(it.message.toString()) }
+}
+
